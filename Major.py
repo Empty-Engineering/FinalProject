@@ -59,16 +59,17 @@ def main():
     if (major.points >= (len(questions)-2)):
             major.set_field(fields[0]);
     elif ((len(questions)-4) <= major.points and major.points < (len(questions)-2)):
-            major.set_field(fields[2]);
+            major.set_field(fields[4]);
     elif ((len(questions)-6) <= major.points and major.points > (len(questions)-4)):
             major.set_field(fields[1]);
     elif ((len(questions)-8) <= major.points and major.points > (len(questions)-6)):
             major.set_field(fields[3]);
-    elif ((len(questions)-10) <= major.points and major.points > (len(questions)-8)):
-            major.set_field(fields[4]);
-    elif ((len(questions)-12) <= major.points and major.points > (len(questions)-10)):
+    elif ((len(questions)-16) <= major.points and major.points > (len(questions)-10)):
+            major.set_field(fields[2]);
+    elif ((len(questions)-17) <= major.points and major.points > (len(questions)-16)):
             major.set_field(fields[6]);
-    elif ((len(questions)*(-1)) <= major.points and major.points > (len(questions)-12)):
+    elif ((len(questions)*(-1)) <= major.points and major.points > (len(questions)-17)):
             major.set_field(fields[5]);
     print(f"Based on your input, a suitable major for you is {major.get_field()}.");
+    
 main()
