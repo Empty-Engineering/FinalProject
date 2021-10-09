@@ -1,4 +1,5 @@
-import subprocess, platform
+import subprocess, platform, random, csv, math
+
 
 
 
@@ -14,6 +15,8 @@ questions = [
             "Do you want to focus on helping people? \n1. I wouldn't mind, but it is not my primary objective. \n2. Yes\nResponse: ",
             "Do you have an interest in how ideas are communicated? \n1. No \n2. Yes\nResponse: "
             ];
+
+
 class Fields:
     def __init__(self, field, points):
         self.field = field;
@@ -29,14 +32,55 @@ class Fields:
     def subt_points(self):
         self.points -= 1;
 
+def generate_token() -> str:
+    keyChar = 0;
+    key = "";
+    while (keyChar < 8):
+        keyChar += 1;
+        randKey = random.randint(0,9);
+        key = key + f"{math.pow(randKey,random.randint(0,5))}";
+    return key;
+    
+
+
+def GET_ROW_COUNT() -> int:
+    with open('users.csv', 'r') as source:
+        users = csv.reader(source, delimiter=',');
+        row_count = sum(1 for row in users);return row_count;
+
+def post_user(name: str, key: str, major: str) -> None:
+    csv_list = [];
+    rowCount = GET_ROW_COUNT();
+    with open('users.csv', 'r') as source:
+        users = csv.reader(source, delimiter=',');
+        for row in users:
+            csv_list.append(row);
+            csv_list.append([f"'{name}'",f"'{key}'", f"'{major}'", f"'{rowCount}'"]);
+    with open('users.csv', 'w', newline='') as csvfile:
+        newWrite = csv.writer(csvfile, delimiter=',');
+        newWrite.writerows(csv_list);
+
 def main():
     global counter;
     counter = 0;
     field = None;
     major: object = Fields(field, 0);
-    print("Answer questions by providing only the number of the answer choice. \n");
+    if (platform.system() == "Windows"):
+        subprocess.Popen("cls", shell=True).communicate();
+    else: 
+        print("\033c", end="");
+    name = input("Hello! What's your name? ")
+    if (platform.system() == "Windows"):
+        subprocess.Popen("cls", shell=True).communicate();
+    else: 
+        print("\033c", end="");
+    print("\n\n\nAnswer questions by providing only the number of the answer choice. \n");
     while (counter < len(questions)):
         try:
+            if (platform.system() == "Windows"):
+                subprocess.Popen("cls", shell=True).communicate();
+            else: 
+                print("\033c", end="");
             response = int(input(questions[counter]))-1;
             counter += 1;
             if (not response):
@@ -71,5 +115,6 @@ def main():
     elif ((len(questions)*(-1)) <= major.points and major.points > (len(questions)-17)):
             major.set_field(fields[5]);
     print(f"Based on your input, a suitable major for you is {major.get_field()}.");
+    post_user(name, generate_token(), major.get_field())
     
 main()

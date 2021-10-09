@@ -3,6 +3,16 @@ Major Selection Tool
 
 This Program is the final project of the IPP series.
  
+30.09.2021
+----
+
+v1.0 Beta
+Added Interfacing and exception handling
+Improved margin of responses for each major
+
+
+
+
 28.09.2021
 -----------
 
