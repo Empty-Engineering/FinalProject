@@ -1,9 +1,14 @@
 import subprocess, platform, random, csv, math
 
-
-
-
-fields = ['STEM', 'Law', 'Medicine', 'Social Sciences', 'Business', 'Education', 'Communications'];
+fields=[
+        'STEM', 
+        'Law',
+        'Medicine', 
+        'Social Sciences', 
+        'Business', 
+        'Education', 
+        'Communications'
+        ];
 questions = [
             "Just a typical weeknight, what are you watching? \n1. DIY videos\n2. Documentary on humanitarian issues \nResponse: ",
             "The power goes out, what do you do? \n1. Google how to restore power \n2. Check on your loved ones to see how they are doing\nResponse: ",
@@ -32,13 +37,15 @@ class Fields:
     def subt_points(self):
         self.points -= 1;
 
-def generate_token() -> str:
+def generate_token(points) -> str:
     keyChar = 0;
     key = "";
+    average_point_coefficient = major.points/len(questions);
     while (keyChar < 8):
         keyChar += 1;
-        randKey = random.randint(0,9);
-        key = key + f"{math.pow(randKey,random.randint(0,5))}";
+        #create random key
+        rand_key = random.randint(0,9)*average_point_coefficient*(math.factorial(major.points)/random.randint(1,5));
+        key = key + f"{rand_key}";
     return key;
     
 
@@ -46,25 +53,28 @@ def generate_token() -> str:
 def GET_ROW_COUNT() -> int:
     with open('users.csv', 'r') as source:
         users = csv.reader(source, delimiter=',');
-        row_count = sum(1 for row in users);return row_count;
+        row_count = sum(1 for row in users);
+        return row_count;
 
-def post_user(name: str, key: str, major: str) -> None:
+def post_user(name: str, key: str, major: str, list_row="") -> None:
     csv_list = [];
-    rowCount = GET_ROW_COUNT();
     with open('users.csv', 'r') as source:
         users = csv.reader(source, delimiter=',');
         for row in users:
             csv_list.append(row);
-            csv_list.append([f"'{name}'",f"'{key}'", f"'{major}'", f"'{rowCount}'"]);
+        csv_list.append([f"'{name}'",f"'{key}'", f"'{major}'", f"'{list_row}'"]);
     with open('users.csv', 'w', newline='') as csvfile:
         newWrite = csv.writer(csvfile, delimiter=',');
         newWrite.writerows(csv_list);
 
 def main():
+    if (not GET_ROW_COUNT()):
+        post_user("Name", "Key", "Major", "Number of Entry")
     global counter;
     counter = 0;
     field = None;
-    major: object = Fields(field, 0);
+    global major;
+    major = Fields(field, 0);
     if (platform.system() == "Windows"):
         subprocess.Popen("cls", shell=True).communicate();
     else: 
@@ -115,6 +125,5 @@ def main():
     elif ((len(questions)*(-1)) <= major.points and major.points > (len(questions)-17)):
             major.set_field(fields[5]);
     print(f"Based on your input, a suitable major for you is {major.get_field()}.");
-    post_user(name, generate_token(), major.get_field())
-    
+    post_user(name, generate_token(major.points), major.get_field(), GET_ROW_COUNT());
 main()
