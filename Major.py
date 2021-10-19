@@ -1,5 +1,5 @@
 import subprocess, platform, random, csv, math
-
+#list of possible fields
 fields=[
         'STEM', 
         'Law',
@@ -9,6 +9,7 @@ fields=[
         'Education', 
         'Communications'
         ];
+#pre-set questions to determine major
 questions = [
             "Just a typical weeknight, what are you watching? \n1. DIY videos\n2. Documentary on humanitarian issues \nResponse: ",
             "The power goes out, what do you do? \n1. Google how to restore power \n2. Check on your loved ones to see how they are doing\nResponse: ",
@@ -21,7 +22,7 @@ questions = [
             "Do you have an interest in how ideas are communicated? \n1. No \n2. Yes\nResponse: "
             ];
 
-
+#object for the user
 class Fields:
     def __init__(self, field, points):
         self.field = field;
@@ -37,6 +38,7 @@ class Fields:
     def subt_points(self):
         self.points -= 1;
 
+#generates user specific key 
 def generate_token(points) -> str:
     keyChar = 0;
     key = "";
@@ -44,18 +46,19 @@ def generate_token(points) -> str:
     while (keyChar < 8):
         keyChar += 1;
         #create random key
-        rand_key = random.randint(0,9)*average_point_coefficient*(math.factorial(major.points)/random.randint(1,5));
+        rand_key = (random.randint(0,9)*average_point_coefficient*(math.factorial(major.points)/random.randint(1,5)));
         key = key + f"{rand_key}";
     return key;
     
 
-
+#gets the number of rows in the user list
 def GET_ROW_COUNT() -> int:
     with open('users.csv', 'r') as source:
         users = csv.reader(source, delimiter=',');
         row_count = sum(1 for row in users);
-        return row_count;
+    return row_count;
 
+#posts the user to the CSV file
 def post_user(name: str, key: str, major: str, list_row="") -> None:
     csv_list = [];
     with open('users.csv', 'r') as source:
@@ -67,7 +70,14 @@ def post_user(name: str, key: str, major: str, list_row="") -> None:
         newWrite = csv.writer(csvfile, delimiter=',');
         newWrite.writerows(csv_list);
 
+def clear_screen() -> None:
+    if (platform.system() == "Windows"):
+        subprocess.Popen("cls", shell=True).communicate();
+    else: 
+        print("\033c", end="");
+
 def main():
+    #if the header doesnt exist at line add one
     if (not GET_ROW_COUNT()):
         post_user("Name", "Key", "Major", "Number of Entry")
     global counter;
@@ -75,41 +85,27 @@ def main():
     field = None;
     global major;
     major = Fields(field, 0);
-    if (platform.system() == "Windows"):
-        subprocess.Popen("cls", shell=True).communicate();
-    else: 
-        print("\033c", end="");
+    #clears the terminal
+    clear_screen();
     name = input("Hello! What's your name? ")
-    if (platform.system() == "Windows"):
-        subprocess.Popen("cls", shell=True).communicate();
-    else: 
-        print("\033c", end="");
+    clear_screen();
     print("\n\n\nAnswer questions by providing only the number of the answer choice. \n");
     while (counter < len(questions)):
         try:
-            if (platform.system() == "Windows"):
-                subprocess.Popen("cls", shell=True).communicate();
-            else: 
-                print("\033c", end="");
+            clear_screen();
             response = int(input(questions[counter]))-1;
             counter += 1;
             if (not response):
                 major.add_points();
             elif (response):
                 major.subt_points();
-            if (platform.system() == "Windows"):
-                subprocess.Popen("cls", shell=True).communicate();
-            else: 
-                print("\033c", end="");
+            clear_screen();
         except:
-            if (platform.system() == "Windows"):
-                subprocess.Popen("cls", shell=True).communicate();
-            else: 
-                print("\033c", end="");
+            clear_screen();
             print("Error, please try again\n")
             
 
-
+#calculate fields
     if (major.points >= (len(questions)-2)):
             major.set_field(fields[0]);
     elif ((len(questions)-4) <= major.points and major.points < (len(questions)-2)):
@@ -126,4 +122,5 @@ def main():
             major.set_field(fields[5]);
     print(f"Based on your input, a suitable major for you is {major.get_field()}.");
     post_user(name, generate_token(major.points), major.get_field(), GET_ROW_COUNT());
+
 main()
