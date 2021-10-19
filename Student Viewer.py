@@ -1,3 +1,7 @@
+#Lukas Robin
+#19.10.2021
+#All rights retained herein
+#Program views student information
 import ctypes, csv, hashlib, os, platform, sys, time
 class User:
     def __init__(self, password):
