@@ -95,6 +95,15 @@ def greater_points()->object:
 
 	elif characterVillain.get_points()>characterHero.get_points():
 		return characterVillain;
+
+def generate_Token() -> None:
+    keyChar = 0
+    key = ""
+    while (keyChar < 64):
+        keyChar += 1;
+        randKey = random.randint(0,9)
+        key = key + f"{randKey}";
+    return key
 #generates user specific key 
 def generate_token(points) -> str:
     keyChar = 0;
@@ -265,5 +274,6 @@ def main():
         print("Choose either 1 or 2. ")
         time.sleep(5);
         os.execv(sys.executable, ['python3'] + sys.argv);
+        
 if __name__ == "__main__":
     main();
