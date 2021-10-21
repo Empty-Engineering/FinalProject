@@ -112,7 +112,7 @@ def generate_token(points) -> str:
     while (keyChar < 8):
         keyChar += 1;
         #create random key
-        rand_key = (random.randint(0,9)*average_point_coefficient*(math.factorial(major.points)/random.randint(1,5)));
+        rand_key = (random.randint(0,9)*average_point_coefficient*(math.factorial(abs(major.points))/random.randint(1,5)));
         key = key + f"{rand_key}";
     return key;
     
